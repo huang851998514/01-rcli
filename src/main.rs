@@ -14,10 +14,10 @@ fn main() -> anyhow::Result<()> {
         SubCommand::GenPass(option) => {
             process_genpass(
                 option.length,
-                option.uppercase,
-                option.lowercase,
-                option.number,
-                option.symbol,
+                option.no_uppercase,
+                option.no_lowercase,
+                option.no_number,
+                option.no_symbol,
             )?;
         }
     }
