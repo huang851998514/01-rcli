@@ -34,3 +34,14 @@ fn verify_input_file(filename: &str) -> Result<String, &'static str> {
         Err("文件不存在")
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_verify_input_file() {
+        assert_eq!(super::verify_input_file("Cargo.toml"), Ok("Cargo.toml".into()));
+        assert_eq!(super::verify_input_file("-"), Ok("-".into()));
+        assert_eq!(super::verify_input_file("not_exist.csv"), Err("文件不存在"));
+    }
+}
