@@ -1,5 +1,5 @@
-mod options;
+mod cli;
 mod process;
 
-pub use options::{Cli, SubCommand};
+pub use cli::{Base64SubCommand, Cli, SubCommand};
 pub use process::{process_csv, process_genpass};
