@@ -1,6 +1,5 @@
 use clap::Parser;
 
-
 #[derive(Parser, Debug)]
 pub struct GenPassOptions {
     #[arg(short, long, default_value_t = 16)]

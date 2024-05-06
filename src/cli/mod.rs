@@ -5,6 +5,7 @@ use std::path::Path;
 
 use clap::Parser;
 
+pub use self::base64::Base64Format;
 pub use self::base64::Base64SubCommand;
 pub use self::csv::OutputFormat;
 use self::{csv::CsvOptions, genpass::GenPassOptions};
@@ -27,7 +28,6 @@ pub enum SubCommand {
 }
 
 fn verify_input_file(filename: &str) -> Result<String, &'static str> {
-    
     if "-" == filename || Path::new(filename).exists() {
         Ok(filename.into())
     } else {
@@ -40,7 +40,10 @@ mod tests {
 
     #[test]
     fn test_verify_input_file() {
-        assert_eq!(super::verify_input_file("Cargo.toml"), Ok("Cargo.toml".into()));
+        assert_eq!(
+            super::verify_input_file("Cargo.toml"),
+            Ok("Cargo.toml".into())
+        );
         assert_eq!(super::verify_input_file("-"), Ok("-".into()));
         assert_eq!(super::verify_input_file("not_exist.csv"), Err("文件不存在"));
     }
