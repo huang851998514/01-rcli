@@ -3,6 +3,7 @@ mod csv;
 mod genpass;
 mod text;
 use std::path::Path;
+use std::path::PathBuf;
 
 use clap::Parser;
 
@@ -28,7 +29,7 @@ pub enum SubCommand {
     #[command(subcommand)]
     Base64(Base64SubCommand),
     #[command(subcommand)]
-    Text(text::TextSubCommand),
+    Text(TextSubCommand),
 }
 
 fn verify_file(filename: &str) -> Result<String, &'static str> {
@@ -36,6 +37,15 @@ fn verify_file(filename: &str) -> Result<String, &'static str> {
         Ok(filename.into())
     } else {
         Err("文件不存在")
+    }
+}
+
+fn verify_path(path: &str) -> Result<PathBuf, &'static str> {
+    let p = Path::new(path);
+    if p.exists() && p.is_dir() {
+        Ok(p.into())
+    } else {
+        Err("路径不存在或者不是文件夹")
     }
 }
 

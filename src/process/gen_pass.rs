@@ -1,5 +1,4 @@
 use rand::seq::SliceRandom;
-use zxcvbn::zxcvbn;
 
 const UPPER: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ";
 const LOWER: &[u8] = b"abcdefghijkmnopqrstuvwxyz";
@@ -12,7 +11,7 @@ pub fn process_genpass(
     no_lowercase: bool,
     no_number: bool,
     no_symbol: bool,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<String> {
     let mut rng = rand::thread_rng();
     let mut password = Vec::new();
     let mut chars = Vec::new();
@@ -39,11 +38,6 @@ pub fn process_genpass(
     }
     password.shuffle(&mut rng);
     let pass = String::from_utf8(password)?;
-    println!("{}", pass);
 
-    //密码强度检测
-    let result = zxcvbn(&pass, &[])?;
-    eprintln!("密码强度：{}", result.score());
-
-    Ok(())
+    Ok(pass)
 }

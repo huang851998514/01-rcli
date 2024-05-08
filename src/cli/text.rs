@@ -1,10 +1,10 @@
 use core::fmt;
-use std::str::FromStr;
+use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Ok;
 use clap::Parser;
 
-use super::verify_file;
+use super::{verify_file, verify_path};
 
 #[derive(Debug, Parser)]
 pub enum TextSubCommand {
@@ -12,6 +12,8 @@ pub enum TextSubCommand {
     Sign(TextSginOptions),
     #[command(about = "为文本验证签名")]
     Verify(TextVerifyOptions),
+    #[command(about = "生成签名用的key")]
+    Generate(KeyGeneratorOptions),
 }
 
 #[derive(Debug, Parser)]
@@ -28,12 +30,20 @@ pub struct TextSginOptions {
 pub struct TextVerifyOptions {
     #[arg(short, long, value_parser = verify_file, default_value = "-")]
     pub input: String,
-    #[arg(short, long, value_parser = verify_file, default_value = "-")]
+    #[arg(short, long, value_parser = verify_file)]
     pub key: String,
     #[arg(short, long)]
     pub signature: String,
     #[arg(long, default_value = "blake3", value_parser = sign_parse_format)]
     pub format: TextSignFormat,
+}
+
+#[derive(Debug, Parser)]
+pub struct KeyGeneratorOptions {
+    #[arg(long, default_value = "blake3", value_parser = sign_parse_format)]
+    pub format: TextSignFormat,
+    #[arg(short, long, value_parser = verify_path)]
+    pub output: PathBuf,
 }
 
 #[derive(Debug, Clone, Copy)]

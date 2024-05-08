@@ -5,7 +5,7 @@ use base64::{
 
 use crate::{utils::read_data, Base64Format};
 
-pub fn process_encode(input: &str, format: Base64Format) -> anyhow::Result<()> {
+pub fn process_encode(input: &str, format: Base64Format) -> anyhow::Result<String> {
     let mut reader = read_data(input)?;
     let mut buf = Vec::new();
     reader.read_to_end(&mut buf)?;
@@ -14,11 +14,10 @@ pub fn process_encode(input: &str, format: Base64Format) -> anyhow::Result<()> {
         Base64Format::Standard => STANDARD.encode(buf),
         Base64Format::UrlSafe => URL_SAFE_NO_PAD.encode(buf),
     };
-    println!("{}", encode);
-    Ok(())
+    Ok(encode)
 }
 
-pub fn process_decode(input: &str, format: Base64Format) -> anyhow::Result<()> {
+pub fn process_decode(input: &str, format: Base64Format) -> anyhow::Result<Vec<u8>> {
     let mut reader = read_data(input)?;
     let mut buf_string = String::new();
     reader.read_to_string(&mut buf_string)?;
@@ -28,11 +27,8 @@ pub fn process_decode(input: &str, format: Base64Format) -> anyhow::Result<()> {
         Base64Format::Standard => STANDARD.decode(buf),
         Base64Format::UrlSafe => URL_SAFE_NO_PAD.decode(buf),
     }?;
-    //TODO: decode出来的不一定是string，这里先这样处理
-    let decode = String::from_utf8(decode)?;
-    let decode = decode.trim();
-    println!("{}", decode);
-    Ok(())
+
+    Ok(decode)
 }
 
 #[cfg(test)]
