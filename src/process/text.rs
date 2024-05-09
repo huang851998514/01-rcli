@@ -197,3 +197,29 @@ pub fn process_text_generate(format: TextSignFormat) -> Result<Vec<Vec<u8>>> {
         TextSignFormat::Ed25519 => Ed25519Signer::generate(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ed25519_sign_verify() -> Result<()> {
+        let sk = Ed25519Signer::load("fixtures/ed25519.sk")?;
+        let pk = Ed25519Verifier::load("fixtures/ed25519.pk")?;
+        let data = b"hello world!";
+        let sign = sk.sign(&mut &data[..])?;
+        let verify = pk.verify(&mut &data[..], &sign)?;
+        assert!(verify);
+        Ok(())
+    }
+
+    #[test]
+    fn test_blake3_sign_verify() -> Result<()> {
+        let sign = Blake3::load("fixtures/blake3.txt")?;
+        let data = b"hello world!";
+        let signature = sign.sign(&mut &data[..])?;
+        let verify = sign.verify(&mut &data[..], &signature)?;
+        assert!(verify);
+        Ok(())
+    }
+}
