@@ -29,11 +29,11 @@ pub enum SubCommand {
     Csv(CsvOptions),
     #[command(name = "genpass", about = "生成随机密码")]
     GenPass(GenPassOptions),
-    #[command(subcommand)]
+    #[command(subcommand, about = "base64编码解码")]
     Base64(Base64SubCommand),
-    #[command(subcommand)]
+    #[command(subcommand, about = "文本签名/验证签名")]
     Text(TextSubCommand),
-    #[command(subcommand)]
+    #[command(subcommand, about = "http文件服务")]
     Http(HttpSubCommand),
 }
 
