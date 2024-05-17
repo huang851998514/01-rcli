@@ -15,5 +15,5 @@ pub struct HttpServeOptions {
     #[arg(short, long,value_parser=verify_path, default_value = ".")]
     pub dir: PathBuf,
     #[arg(short, long, default_value = "8080")]
-    pub port: String,
+    pub port: u16,
 }

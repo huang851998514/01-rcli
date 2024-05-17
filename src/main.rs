@@ -1,12 +1,13 @@
 use clap::Parser;
 use rcli::{
-    process_csv, process_decode, process_encode, process_genpass, process_text_generate,
-    process_text_sign, process_text_verify, Base64SubCommand, Cli, HttpSubCommand, SubCommand,
-    TextSignFormat, TextSubCommand,
+    process_csv, process_decode, process_encode, process_genpass, process_http_serve,
+    process_text_generate, process_text_sign, process_text_verify, Base64SubCommand, Cli,
+    HttpSubCommand, SubCommand, TextSignFormat, TextSubCommand,
 };
 use zxcvbn::zxcvbn;
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
     let cli_parse = Cli::parse();
     match cli_parse.cmd {
@@ -87,9 +88,7 @@ fn main() -> anyhow::Result<()> {
         // http服务
         SubCommand::Http(sub_command) => match sub_command {
             // 启动http文件服务
-            HttpSubCommand::Serve(options) => {
-                println!("{:?}", options);
-            }
+            HttpSubCommand::Serve(options) => process_http_serve(options.dir, options.port).await?,
         },
     }
     Ok(())
