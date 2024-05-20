@@ -4,6 +4,8 @@ use std::{path::PathBuf, str::FromStr};
 use anyhow::Ok;
 use clap::Parser;
 
+use crate::{process_text_generate, process_text_sign, process_text_verify, CmdExector};
+
 use super::{verify_file, verify_path};
 
 #[derive(Debug, Parser)]
@@ -80,5 +82,55 @@ impl From<TextSignFormat> for &'static str {
 impl fmt::Display for TextSignFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", Into::<&'static str>::into(*self))
+    }
+}
+
+impl CmdExector for TextSubCommand {
+    async fn execute(self) -> anyhow::Result<()> {
+        match self {
+            // 文本签名
+            TextSubCommand::Sign(options) => options.execute().await,
+            // 文本验证签名
+            TextSubCommand::Verify(options) => options.execute().await,
+            // 生成签名用的key
+            TextSubCommand::Generate(options) => options.execute().await,
+        }
+    }
+}
+
+impl CmdExector for TextSginOptions {
+    async fn execute(self) -> anyhow::Result<()> {
+        let signed = process_text_sign(&self.input, &self.key, self.format)?;
+        print!("{}", signed);
+        Ok(())
+    }
+}
+
+impl CmdExector for TextVerifyOptions {
+    async fn execute(self) -> anyhow::Result<()> {
+        let verify = process_text_verify(&self.input, &self.key, &self.signature, self.format)?;
+        println!("{}", verify);
+        Ok(())
+    }
+}
+
+impl CmdExector for KeyGeneratorOptions {
+    async fn execute(self) -> anyhow::Result<()> {
+        let key = process_text_generate(self.format)?;
+        let path = self.output;
+        match self.format {
+            // 生成blake3签名用的key
+            TextSignFormat::Blake3 => {
+                let name = path.join("blake3.txt");
+                tokio::fs::write(name, &key[0]).await?;
+                Ok(())
+            }
+            // 生成ed25519签名用的key
+            TextSignFormat::Ed25519 => {
+                tokio::fs::write(path.join("ed25519.sk"), &key[0]).await?;
+                tokio::fs::write(path.join("ed25519.pk"), &key[1]).await?;
+                Ok(())
+            }
+        }
     }
 }

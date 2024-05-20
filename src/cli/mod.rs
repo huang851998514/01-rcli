@@ -8,13 +8,13 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 
-pub use self::base64::Base64Format;
-pub use self::base64::Base64SubCommand;
+pub use self::base64::{Base64DecodeOptions, Base64EncodeOptions, Base64Format, Base64SubCommand};
 pub use self::csv::OutputFormat;
 pub use self::http::HttpSubCommand;
 pub use self::text::{TextSignFormat, TextSubCommand};
-use self::{csv::CsvOptions, genpass::GenPassOptions};
+pub use self::{csv::CsvOptions, genpass::GenPassOptions};
 
 #[derive(Parser, Debug)]
 #[command(name = "rcli", version, author, about,long_about = None)]
@@ -23,6 +23,7 @@ pub struct Cli {
     pub cmd: SubCommand,
 }
 
+#[enum_dispatch(CmdExector)]
 #[derive(Parser, Debug)]
 pub enum SubCommand {
     #[command(about = "将csv文件转换为其他类型文件")]
@@ -64,3 +65,15 @@ mod tests {
         assert_eq!(super::verify_file("not_exist.csv"), Err("文件不存在"));
     }
 }
+
+// impl CmdExector for SubCommand {
+//     async fn execute(self) -> anyhow::Result<()> {
+//         match self {
+//             SubCommand::Csv(option) => option.execute().await,
+//             SubCommand::GenPass(option) => option.execute().await,
+//             SubCommand::Base64(sub_command) => sub_command.execute().await,
+//             SubCommand::Text(sub_command) => sub_command.execute().await,
+//             SubCommand::Http(sub_command) => sub_command.execute().await,
+//         }
+//     }
+// }

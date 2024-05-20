@@ -1,9 +1,13 @@
 use core::fmt;
 use std::str::FromStr;
 
+use crate::{process_decode, process_encode, CmdExector};
+
 use super::verify_file;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 
+#[enum_dispatch(CmdExector)]
 #[derive(Parser, Debug)]
 pub enum Base64SubCommand {
     #[command(name = "encode", about = "加密")]
@@ -62,5 +66,33 @@ impl From<Base64Format> for &'static str {
 impl fmt::Display for Base64Format {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", Into::<&str>::into(*self))
+    }
+}
+
+// impl CmdExector for Base64SubCommand {
+//     async fn execute(self) -> anyhow::Result<()> {
+//         match self {
+//             Base64SubCommand::Encode(option) => option.execute().await,
+//             Base64SubCommand::Decode(option) => option.execute().await,
+//         }
+//     }
+// }
+
+impl CmdExector for Base64EncodeOptions {
+    async fn execute(self) -> anyhow::Result<()> {
+        let encode = process_encode(&self.input, self.format)?;
+        print!("{}", encode);
+        Ok(())
+    }
+}
+
+impl CmdExector for Base64DecodeOptions {
+    async fn execute(self) -> anyhow::Result<()> {
+        let decode = process_decode(&self.input, self.format)?;
+        //TODO: decode出来的不一定是string，这里先这样处理
+        let decode = String::from_utf8(decode)?;
+        let decode = decode.trim().to_string();
+        print!("{}", decode);
+        Ok(())
     }
 }
