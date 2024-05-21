@@ -3,11 +3,13 @@ use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Ok;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 
 use crate::{process_text_generate, process_text_sign, process_text_verify, CmdExector};
 
 use super::{verify_file, verify_path};
 
+#[enum_dispatch(CmdExector)]
 #[derive(Debug, Parser)]
 pub enum TextSubCommand {
     #[command(about = "为文本签名")]
@@ -85,18 +87,18 @@ impl fmt::Display for TextSignFormat {
     }
 }
 
-impl CmdExector for TextSubCommand {
-    async fn execute(self) -> anyhow::Result<()> {
-        match self {
-            // 文本签名
-            TextSubCommand::Sign(options) => options.execute().await,
-            // 文本验证签名
-            TextSubCommand::Verify(options) => options.execute().await,
-            // 生成签名用的key
-            TextSubCommand::Generate(options) => options.execute().await,
-        }
-    }
-}
+// impl CmdExector for TextSubCommand {
+//     async fn execute(self) -> anyhow::Result<()> {
+//         match self {
+//             // 文本签名
+//             TextSubCommand::Sign(options) => options.execute().await,
+//             // 文本验证签名
+//             TextSubCommand::Verify(options) => options.execute().await,
+//             // 生成签名用的key
+//             TextSubCommand::Generate(options) => options.execute().await,
+//         }
+//     }
+// }
 
 impl CmdExector for TextSginOptions {
     async fn execute(self) -> anyhow::Result<()> {

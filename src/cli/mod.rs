@@ -12,8 +12,10 @@ use enum_dispatch::enum_dispatch;
 
 pub use self::base64::{Base64DecodeOptions, Base64EncodeOptions, Base64Format, Base64SubCommand};
 pub use self::csv::OutputFormat;
-pub use self::http::HttpSubCommand;
-pub use self::text::{TextSignFormat, TextSubCommand};
+pub use self::http::{HttpServeOptions, HttpSubCommand};
+pub use self::text::{
+    KeyGeneratorOptions, TextSginOptions, TextSignFormat, TextSubCommand, TextVerifyOptions,
+};
 pub use self::{csv::CsvOptions, genpass::GenPassOptions};
 
 #[derive(Parser, Debug)]

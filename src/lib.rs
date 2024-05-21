@@ -4,7 +4,8 @@ mod utils;
 
 pub use cli::{
     Base64DecodeOptions, Base64EncodeOptions, Base64Format, Base64SubCommand, Cli, CsvOptions,
-    GenPassOptions, HttpSubCommand, SubCommand, TextSignFormat, TextSubCommand,
+    GenPassOptions, HttpServeOptions, HttpSubCommand, KeyGeneratorOptions, SubCommand,
+    TextSginOptions, TextSignFormat, TextSubCommand, TextVerifyOptions,
 };
 use enum_dispatch::enum_dispatch;
 pub use process::{
